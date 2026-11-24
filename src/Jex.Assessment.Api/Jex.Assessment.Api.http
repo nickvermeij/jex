@@ -1,0 +1,50 @@
+@host = http://localhost:5000
+@companyId = replace-after-create
+@vacancyId = replace-after-create
+
+### Create a company with a structured address and coordinates
+POST {{host}}/api/v1/companies
+Content-Type: application/json
+
+{
+  "name": "JEX",
+  "address": {
+    "street": "Nassaukade",
+    "houseNumber": "5",
+    "postalCode": "3071 JL",
+    "city": "Rotterdam",
+    "countryCode": "NL",
+    "latitude": 51.9143,
+    "longitude": 4.5034
+  }
+}
+
+### List companies
+GET {{host}}/api/v1/companies
+
+### Create an active vacancy through the backoffice API
+POST {{host}}/api/v1/companies/{{companyId}}/vacancies
+Content-Type: application/json
+
+{
+  "title": "Technical Lead",
+  "description": "Build maintainable services with .NET.",
+  "status": "Active"
+}
+
+### Public list: only companies with active vacancies
+GET {{host}}/api/v1/companies
+
+### Find companies with active vacancies within 25 km of Rotterdam
+GET {{host}}/api/v1/companies/nearby?latitude=51.9244&longitude=4.4777&radiusKm=25
+
+### Public vacancy creation: creates a draft and only requires a title
+POST {{host}}/api/v1/companies/{{companyId}}/vacancies
+Content-Type: application/json
+
+{
+  "title": "Backend Developer"
+}
+
+### Delete a company and cascade-delete its vacancies
+DELETE {{host}}/api/v1/companies/{{companyId}}

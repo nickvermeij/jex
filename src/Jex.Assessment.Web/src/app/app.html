@@ -1,0 +1,179 @@
+<div class="min-h-screen bg-stone-50 text-slate-950">
+  <header class="relative overflow-hidden bg-slate-950 text-white">
+    <div class="absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_20%_20%,#2dd4bf_0,transparent_32%),radial-gradient(circle_at_80%_0%,#a3e635_0,transparent_25%)]"></div>
+    <nav class="relative mx-auto flex max-w-7xl items-center justify-between px-5 py-6 lg:px-8" aria-label="Hoofdnavigatie">
+      <a href="#" class="flex items-center gap-3" aria-label="JEX Jobs home">
+        <span class="grid size-10 place-items-center rounded-xl bg-lime-300 font-black text-slate-950 shadow-[0_0_30px_rgba(190,242,100,.25)]">J</span>
+        <span class="text-lg font-extrabold tracking-tight">JEX <span class="font-medium text-slate-400">Jobs</span></span>
+      </a>
+      <a href="#vacatures" class="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-lime-300/60 hover:text-lime-300">Bekijk vacatures</a>
+    </nav>
+
+    <div class="relative mx-auto grid max-w-7xl gap-12 px-5 pb-24 pt-14 lg:grid-cols-[1.25fr_.75fr] lg:px-8 lg:pb-28 lg:pt-20">
+      <div>
+        <p class="mb-6 inline-flex items-center gap-2 rounded-full border border-teal-300/25 bg-teal-300/10 px-4 py-2 text-xs font-bold uppercase tracking-[.22em] text-teal-200">
+          <span class="size-2 rounded-full bg-lime-300"></span>
+          Werk dat bij je past
+        </p>
+        <h1 class="max-w-4xl text-5xl font-black leading-[.98] tracking-[-.045em] sm:text-6xl lg:text-7xl">
+          Vind je volgende<br />
+          <span class="text-lime-300">uitdaging dichtbij.</span>
+        </h1>
+        <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-300">Ontdek openstaande vacatures bij ambitieuze werkgevers. Zoek door heel Nederland of vind werk binnen jouw gewenste reisafstand.</p>
+      </div>
+      <div class="self-end rounded-3xl border border-white/10 bg-white/[.06] p-6 backdrop-blur-sm">
+        <p class="text-sm font-semibold text-slate-400">Nu beschikbaar</p>
+        <div class="mt-3 flex items-end gap-3">
+          <strong class="text-5xl font-black text-white">{{ vacancyCount() }}</strong>
+          <span class="pb-1.5 text-slate-300">actieve vacatures</span>
+        </div>
+        <div class="mt-6 h-px bg-white/10"></div>
+        <p class="mt-5 text-sm leading-6 text-slate-400">Rechtstreeks bij <span class="font-semibold text-slate-200">{{ companies().length }} werkgevers</span>, zonder tussenpersonen.</p>
+      </div>
+    </div>
+  </header>
+
+  <main id="vacatures" class="mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-20">
+    <section aria-labelledby="search-title" class="-mt-24 relative z-10 rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_24px_80px_rgba(15,23,42,.12)] sm:p-7">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div class="max-w-xl">
+          <p class="text-xs font-bold uppercase tracking-[.2em] text-teal-700">Zoekgebied</p>
+          <h2 id="search-title" class="mt-2 text-2xl font-black tracking-tight sm:text-3xl">Waar wil je werken?</h2>
+          <p class="mt-2 text-sm leading-6 text-slate-500">Gebruik je locatie of probeer een van de voorbeeldsteden.</p>
+        </div>
+        <label class="block min-w-44 text-sm font-semibold text-slate-700">
+          Maximale afstand
+          <select [ngModel]="radiusKm()" (ngModelChange)="radiusKm.set(+$event)" class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10">
+            <option [value]="10">10 kilometer</option>
+            <option [value]="25">25 kilometer</option>
+            <option [value]="50">50 kilometer</option>
+            <option [value]="100">100 kilometer</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <button type="button" (click)="showAll()" class="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-950/15">Heel Nederland</button>
+        <button type="button" (click)="searchPreset(51.9244, 4.4777, 'Rotterdam')" class="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-teal-500 hover:text-teal-700 focus:outline-none focus:ring-4 focus:ring-teal-500/10">Rotterdam</button>
+        <button type="button" (click)="searchPreset(52.3676, 4.9041, 'Amsterdam')" class="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-teal-500 hover:text-teal-700 focus:outline-none focus:ring-4 focus:ring-teal-500/10">Amsterdam</button>
+        <button type="button" (click)="useCurrentLocation()" [disabled]="locating()" class="inline-flex items-center gap-2 rounded-xl border border-teal-200 bg-teal-50 px-5 py-3 text-sm font-bold text-teal-800 transition hover:bg-teal-100 disabled:cursor-wait disabled:opacity-60 focus:outline-none focus:ring-4 focus:ring-teal-500/10">
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/><circle cx="12" cy="12" r="7"/></svg>
+          {{ locating() ? 'Locatie ophalen…' : 'Gebruik mijn locatie' }}
+        </button>
+      </div>
+    </section>
+
+    <section class="mt-14" aria-labelledby="results-title">
+      <div class="flex flex-col gap-3 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="text-sm font-bold text-teal-700">{{ locationLabel() }}</p>
+          <h2 id="results-title" class="mt-1 text-3xl font-black tracking-tight">Openstaande vacatures</h2>
+        </div>
+        @if (!loading() && !error()) {
+          <p class="text-sm text-slate-500"><span class="font-bold text-slate-900">{{ vacancyCount() }}</span> resultaten bij {{ companies().length }} werkgevers</p>
+        }
+      </div>
+
+      @if (error()) {
+        <div role="alert" class="mt-8 flex items-start gap-4 rounded-2xl border border-red-200 bg-red-50 p-5 text-red-900">
+          <span class="grid size-9 shrink-0 place-items-center rounded-full bg-red-100 font-black">!</span>
+          <div><p class="font-bold">Er ging iets mis</p><p class="mt-1 text-sm text-red-700">{{ error() }}</p></div>
+        </div>
+      } @else if (loading()) {
+        <div class="mt-8 grid gap-5 md:grid-cols-2">
+          @for (item of [1, 2, 3, 4]; track item) {
+            <div class="animate-pulse rounded-3xl border border-slate-200 bg-white p-6">
+              <div class="h-5 w-28 rounded bg-slate-200"></div>
+              <div class="mt-5 h-8 w-3/4 rounded bg-slate-200"></div>
+              <div class="mt-3 h-4 w-full rounded bg-slate-100"></div>
+              <div class="mt-2 h-4 w-2/3 rounded bg-slate-100"></div>
+            </div>
+          }
+        </div>
+      } @else if (companies().length === 0) {
+        <div class="mt-10 rounded-3xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
+          <div class="mx-auto grid size-14 place-items-center rounded-2xl bg-slate-100 text-2xl">⌖</div>
+          <h3 class="mt-5 text-xl font-black">Geen vacatures binnen dit gebied</h3>
+          <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">Vergroot je zoekafstand of bekijk alle vacatures in Nederland.</p>
+          <button type="button" (click)="showAll()" class="mt-6 rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white">Bekijk alles</button>
+        </div>
+      } @else {
+        <div class="mt-8 grid gap-6 lg:grid-cols-2">
+          @for (company of companies(); track company.id) {
+            <article class="group flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-xl hover:shadow-slate-200/60">
+              <div class="flex items-start justify-between gap-4 border-b border-slate-100 p-6">
+                <div class="flex min-w-0 items-center gap-4">
+                  <div class="grid size-12 shrink-0 place-items-center rounded-2xl bg-slate-950 text-lg font-black text-lime-300">{{ company.name.charAt(0) }}</div>
+                  <div class="min-w-0">
+                    <h3 class="truncate text-lg font-black tracking-tight">{{ company.name }}</h3>
+                    <p class="mt-1 truncate text-sm text-slate-500">{{ formatAddress(company) }}</p>
+                  </div>
+                </div>
+                @if (company.distanceKm !== undefined) {
+                  <span class="shrink-0 rounded-full bg-teal-50 px-3 py-1.5 text-xs font-bold text-teal-800">{{ company.distanceKm }} km</span>
+                }
+              </div>
+
+              <div class="flex-1 p-6">
+                <p class="mb-4 text-xs font-bold uppercase tracking-[.16em] text-slate-400">{{ company.vacancies.length }} {{ company.vacancies.length === 1 ? 'vacature' : 'vacatures' }}</p>
+                <div class="space-y-4">
+                  @for (vacancy of company.vacancies; track vacancy.id) {
+                    <div class="rounded-2xl bg-stone-50 p-5 transition group-hover:bg-teal-50/40">
+                      <h4 class="font-extrabold text-slate-900">{{ vacancy.title }}</h4>
+                      <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{{ vacancy.description }}</p>
+                      <div class="mt-4 flex items-center gap-2 text-xs font-bold text-teal-700"><span class="size-1.5 rounded-full bg-lime-500"></span> Nu open</div>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between gap-4 border-t border-slate-100 bg-slate-50/70 px-6 py-4">
+                <span class="text-xs text-slate-500">Zelf een vacature plaatsen?</span>
+                <button type="button" (click)="openVacancyForm(company)" class="text-sm font-extrabold text-slate-900 underline decoration-lime-400 decoration-2 underline-offset-4 transition hover:text-teal-700">Vacature aanmelden</button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </main>
+
+  <footer class="mt-12 border-t border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+      <p class="font-bold text-slate-800">JEX Jobs</p>
+      <p>Gebouwd met Angular, Tailwind en de JEX REST API.</p>
+    </div>
+  </footer>
+</div>
+
+@if (selectedCompany(); as company) {
+  <div class="fixed inset-0 z-50 grid place-items-center bg-slate-950/70 p-4 backdrop-blur-sm" (click)="closeVacancyForm()" role="presentation">
+    <section class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl sm:p-8" role="dialog" aria-modal="true" aria-labelledby="vacancy-dialog-title" (click)="$event.stopPropagation()">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[.18em] text-teal-700">Nieuwe vacature</p>
+          <h2 id="vacancy-dialog-title" class="mt-2 text-2xl font-black tracking-tight">Vacature voor {{ company.name }}</h2>
+          <p class="mt-2 text-sm leading-6 text-slate-500">De vacature wordt als concept opgeslagen zodat de backoffice deze kan aanvullen en activeren.</p>
+        </div>
+        <button type="button" (click)="closeVacancyForm()" class="grid size-9 shrink-0 place-items-center rounded-full bg-slate-100 text-xl text-slate-500 transition hover:bg-slate-200" aria-label="Sluiten">×</button>
+      </div>
+
+      <form class="mt-7" (ngSubmit)="submitVacancy()">
+        <label for="vacancy-title" class="text-sm font-bold text-slate-800">Functietitel</label>
+        <input id="vacancy-title" name="vacancyTitle" type="text" maxlength="200" required autofocus [ngModel]="vacancyTitle()" (ngModelChange)="vacancyTitle.set($event)" placeholder="Bijvoorbeeld Senior .NET Developer" class="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3.5 outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10" />
+        @if (formError()) { <p class="mt-2 text-sm font-semibold text-red-600">{{ formError() }}</p> }
+        <div class="mt-7 flex justify-end gap-3">
+          <button type="button" (click)="closeVacancyForm()" class="rounded-xl px-5 py-3 text-sm font-bold text-slate-600 hover:bg-slate-100">Annuleren</button>
+          <button type="submit" [disabled]="submitting()" class="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-60">{{ submitting() ? 'Opslaan…' : 'Opslaan als concept' }}</button>
+        </div>
+      </form>
+    </section>
+  </div>
+}
+
+@if (notification()) {
+  <div role="status" class="fixed bottom-5 left-1/2 z-[60] flex w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 items-center gap-3 rounded-2xl bg-slate-950 px-5 py-4 text-sm font-semibold text-white shadow-2xl">
+    <span class="grid size-7 place-items-center rounded-full bg-lime-300 font-black text-slate-950">✓</span>
+    {{ notification() }}
+  </div>
+}
