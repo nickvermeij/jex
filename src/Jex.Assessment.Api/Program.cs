@@ -37,16 +37,21 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>("SeedData:Enabled"))
+if (app.Environment.IsDevelopment())
 {
     await using var scope = app.Services.CreateAsyncScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    var logger = scope.ServiceProvider
-        .GetRequiredService<ILoggerFactory>()
-        .CreateLogger("DevelopmentDataSeeder");
 
     await dbContext.Database.MigrateAsync();
-    await DevelopmentDataSeeder.SeedAsync(dbContext, logger);
+
+    if (app.Configuration.GetValue<bool>("SeedData:Enabled"))
+    {
+        var logger = scope.ServiceProvider
+            .GetRequiredService<ILoggerFactory>()
+            .CreateLogger("DevelopmentDataSeeder");
+
+        await DevelopmentDataSeeder.SeedAsync(dbContext, logger);
+    }
 }
 
 app.UseExceptionHandler();
